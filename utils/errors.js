@@ -12,6 +12,7 @@ class GeneralError extends Error {
     if (this instanceof NotFound) {
       return 404;
     }
+
     return 500;
   }
 }
