@@ -79,7 +79,7 @@ const updateUser = async (req, res, next) => {
       {
         new: true,
         runValidators: true,
-      };
+      }
     );
     res.status(200).send({ user });
   } catch (err) {

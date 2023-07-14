@@ -64,7 +64,7 @@ const likeCard = async (req, res, next) => {
     const card = await Card.findByIdAndUpdate(
       req.params.id,
       { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
-      { new: true };
+      { new: true }
     );
      if (card === null) {
       throw new NotFound('Карточка не найдена');
