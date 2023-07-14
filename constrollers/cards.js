@@ -1,72 +1,99 @@
+const validator = require("validator");
 const Card = require("../models/card");
+const { BadRequest, NotFound } = require("../utils/errors");
 
-const getCards = (req, res) => {
-  Card.find({})
-    .then((cards) => {
-      res.status(201).send({ cards, message: "Все карточки" });
-    })
-    .catch(() => {
-      res.status(500).send({
-        message: "Серверная ошибка",
-      });
-    });
+const getCards = async (req, res, next) => {
+  try {
+    const cards = await Card.find({});
+    if (cards.length === 0) {
+      throw new NotFound("Cписок карточек пуст");
+    } else {
+      res.status(201).send({ cards, message: "Список карточек" });
+    }
+  } catch (err) {
+    next(err);
+  }
 };
 
-const postCard = (req, res) => {
+const postCard = async (req, res, next) => {
   const { name, link } = req.body;
-  Card.create({ name, link, owner: req.user._id })
-    .then((card) => {
-      res.status(201).send({ card, message: "Карточка создана" });
-    })
-    .catch(() => {
-      res.status(500).send({
-        message: "Серверная ошибка",
-      });
-    });
+  try {
+    if (!name || !link) {
+      throw new BadRequest("Не заполнено обязательное поле");
+    }
+
+    if (name.length < 2 || name.length > 30) {
+      throw new BadRequest("Поле должно содержать от 2 до 30 символов");
+    }
+    if (!validator.isURL(link)) {
+      throw new BadRequest("Введите правильный URL");
+    }
+    const card = await Card.create({ name, link, owner: req.user._id });
+    res.status(200).send({ card, message: "Карточка создана" });
+  } catch (err) {
+    next(err);
+  }
 };
 
-const deleteCardById = (req, res) => {
-  Card.findByIdAndRemove(req.params.id)
-    .then((user) => {
-      res.status(200).send({ user, message: "Карточка удалена" });
-    })
-    .catch(() => {
-      res.status(404).send({
-        message: "Карточка не найдена",
-      });
-    });
+const deleteCardById = async (req, res, next) => {
+  try {
+    if (!req.params.id) {
+      throw new BadRequest("Введите ID карточки");
+    }
+    if (!validator.isMongoId(req.params.id)) {
+      throw new BadRequest("Формат ID неверный");
+    }
+    const card = await Card.findByIdAndRemove(req.params.id);
+    if (card === null) {
+      throw new NotFound("Карточка с таким ID не найдена");
+    }
+    res.status(200).send({ card, message: "Карточка удалена" });
+  } catch (err) {
+    next(err);
+  }
 };
 
-const likeCard = (req, res) => {
-  Card.findByIdAndUpdate(
-    req.params.id,
-    { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
-    { new: true }
-  )
-    .then((user) => {
-      res.status(200).send({ user, message: "Лайк поставлен" });
-    })
-    .catch(() => {
-      res.status(404).send({
-        message: "Карточка не найдена",
-      });
-    });
+const likeCard = async (req, res, next) => {
+  try {
+    if (!req.params.id) {
+      throw new BadRequest("Введите ID");
+    }
+    if (!validator.isMongoId(req.params.id)) {
+      throw new NotFound("Формат ID неверный");
+    }
+    const card = await Card.findByIdAndUpdate(
+      req.params.id,
+      { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
+      { new: true }
+    );
+    res.status(200).send({ card, message: "Лайк установлен" });
+  } catch (err) {
+    next(err);
+  }
 };
 
-const deleteLikeCard = (req, res) => {
-  Card.findByIdAndUpdate(
-    req.params.id,
-    { $pull: { likes: req.user._id } }, // добавить _id в массив, если его там нет
-    { new: true }
-  )
-    .then((user) => {
-      res.status(200).send({ user, message: "Лайк удален" });
-    })
-    .catch(() => {
-      res.status(404).send({
-        message: "Карточка не найдена",
-      });
-    });
+const deleteLikeCard = async (req, res, next) => {
+  try {
+    if (!req.params.id) {
+      throw new BadRequest("Введите ID");
+    }
+    if (!validator.isMongoId(req.params.id)) {
+      throw new NotFound("Формат ID неверный");
+    }
+
+    const card = await Card.findByIdAndUpdate(
+      req.params.id,
+      { $pull: { likes: req.user._id } }, // добавить _id в массив, если его там нет
+      { new: true }
+    );
+    if (card === null) {
+      throw new NotFound("Карточка не найдена");
+    } else {
+      res.status(200).send({ card, message: "Лайк удален" });
+    }
+  } catch (err) {
+    next(err);
+  }
 };
 
 module.exports = {

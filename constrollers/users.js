@@ -21,7 +21,11 @@ const getUserById = async (req, res, next) => {
       throw new NotFound("Введите правильный ID пользователя");
     }
     const user = await User.findById(req.params.id);
-    res.status(200).send({ user, message: "Профиль пользователя найден" });
+    if (user === null) {
+      throw new NotFound("Пользователь с таким ID не найден");
+    } else {
+      res.status(200).send({ user, message: "Профиль пользователя найден" });
+    }
   } catch (err) {
     next(err);
   }
@@ -44,7 +48,7 @@ const postUser = async (req, res, next) => {
       throw new BadRequest("Введите правильный URL");
     }
     const user = await User.create({ name, about, avatar });
-    res.status(200).send({ user, message: "Профиль пользователя создан" });
+    res.status(201).send({ user, message: "Профиль пользователя создан" });
   } catch (err) {
     next(err);
   }
