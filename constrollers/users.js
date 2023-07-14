@@ -17,7 +17,7 @@ const getUsers = async (req, res, next) => {
 
 const getUserById = async (req, res, next) => {
   try {
-	  if (!req.params.id) {
+    if (!req.params.id) {
       throw new NotFound('Введите правильный ID пользователя');
     }
     if (!validator.isMongoId(req.params.id)) {
@@ -79,7 +79,7 @@ const updateUser = async (req, res, next) => {
       {
         new: true,
         runValidators: true,
-      }
+      },
     );
     res.status(200).send({ user });
   } catch (err) {
@@ -102,7 +102,7 @@ const updateAvatar = async (req, res, next) => {
       {
         new: true,
         runValidators: true,
-      };
+      },
     );
     res.status(200).send({ user });
   } catch (err) {
