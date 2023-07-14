@@ -1,14 +1,14 @@
-const validator = require("validator");
-const User = require("../models/user");
-const { BadRequest, NotFound } = require("../utils/errors");
+const validator = require('validator');
+const User = require('../models/user');
+const { BadRequest, NotFound } = require('../utils/errors');
 
 const getUsers = async (req, res, next) => {
   try {
     const users = await User.find({});
     if (users.length === 0) {
-      throw new NotFound("Cписок пользователей пуст");
+      throw new NotFound('Cписок пользователей пуст');
     } else {
-      res.status(201).send({ users, message: "Список пользователей" });
+      res.status(201).send({ users, message: 'Список пользователей' });
     }
   } catch (err) {
     next(err);
@@ -18,13 +18,13 @@ const getUsers = async (req, res, next) => {
 const getUserById = async (req, res, next) => {
   try {
     if (!validator.isMongoId(req.params.id)) {
-      throw new NotFound("Введите правильный ID пользователя");
+      throw new NotFound('Введите правильный ID пользователя');
     }
     const user = await User.findById(req.params.id);
     if (user === null) {
-      throw new NotFound("Пользователь с таким ID не найден");
+      throw new NotFound('Пользователь с таким ID не найден');
     } else {
-      res.status(200).send({ user, message: "Профиль пользователя найден" });
+      res.status(200).send({ user, message: 'Профиль пользователя найден' });
     }
   } catch (err) {
     next(err);
@@ -35,20 +35,20 @@ const postUser = async (req, res, next) => {
   const { name, about, avatar } = req.body;
   try {
     if (!name || !about || !avatar) {
-      throw new BadRequest("Не заполнено обязательное поле");
+      throw new BadRequest('Не заполнено обязательное поле');
     }
 
     if (name.length < 2 || about.length < 2) {
-      throw new BadRequest("Поле должно содержать более 2 символов");
+      throw new BadRequest('Поле должно содержать более 2 символов');
     }
     if (about.length > 30 || name.length > 30) {
-      throw new BadRequest("Поле должно содержать не более 30 символов");
+      throw new BadRequest('Поле должно содержать не более 30 символов');
     }
     if (!validator.isURL(avatar)) {
-      throw new BadRequest("Введите правильный URL");
+      throw new BadRequest('Введите правильный URL');
     }
     const user = await User.create({ name, about, avatar });
-    res.status(201).send({ user, message: "Профиль пользователя создан" });
+    res.status(201).send({ user, message: 'Профиль пользователя создан' });
   } catch (err) {
     next(err);
   }
@@ -65,10 +65,10 @@ const updateUser = async (req, res, next) => {
       throw new BadRequest('Не заполнено поле "О себе"');
     }
     if (about.length < 2 || name.length < 2) {
-      throw new BadRequest("Поле должно содержать более 2 символов");
+      throw new BadRequest('Поле должно содержать более 2 символов');
     }
     if (about.length > 30 || name.length > 30) {
-      throw new BadRequest("Поле должно содержать не более 30 символов");
+      throw new BadRequest('Поле должно содержать не более 30 символов');
     }
     const user = await User.findByIdAndUpdate(
       req.user._id,
@@ -78,7 +78,7 @@ const updateUser = async (req, res, next) => {
         runValidators: true,
       }
     );
-    res.status(200).send({ user, message: "Профиль обновлен" });
+    res.status(200).send({ user, message: 'Профиль обновлен' });
   } catch (err) {
     next(err);
   }
@@ -88,7 +88,7 @@ const updateAvatar = async (req, res, next) => {
   const { avatar } = req.body;
   try {
     if (!validator.isURL(avatar)) {
-      throw new BadRequest("Введите правильный URL");
+      throw new BadRequest('Введите правильный URL');
     }
     if (!avatar) {
       throw new BadRequest('Не заполнено поле "Ссылка на аватар"');
@@ -101,7 +101,7 @@ const updateAvatar = async (req, res, next) => {
         runValidators: true,
       }
     );
-    res.status(200).send({ user, message: "Аватар обновлен" });
+    res.status(200).send({ user, message: 'Аватар обновлен' });
   } catch (err) {
     next(err);
   }
