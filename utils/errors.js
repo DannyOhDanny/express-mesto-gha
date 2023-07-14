@@ -1,4 +1,6 @@
 /* eslint max-classes-per-file: ["error", 4] */
+/* eslint no-use-before-define: ["error", { "classes": false }] */
+
 class GeneralError extends Error {
   constructor(message) {
     super();

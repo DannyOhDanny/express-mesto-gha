@@ -8,7 +8,7 @@ const getUsers = async (req, res, next) => {
     if (users.length === 0) {
       throw new NotFound('Cписок пользователей пуст');
     } else {
-      res.status(201).send({ users, message: 'Список пользователей' });
+      res.status(201).send({ users });
     }
   } catch (err) {
     next(err);
@@ -17,6 +17,9 @@ const getUsers = async (req, res, next) => {
 
 const getUserById = async (req, res, next) => {
   try {
+	  if (!req.params.id) {
+      throw new NotFound('Введите правильный ID пользователя');
+    }
     if (!validator.isMongoId(req.params.id)) {
       throw new NotFound('Введите правильный ID пользователя');
     }
@@ -24,7 +27,7 @@ const getUserById = async (req, res, next) => {
     if (user === null) {
       throw new NotFound('Пользователь с таким ID не найден');
     } else {
-      res.status(200).send({ user, message: 'Профиль пользователя найден' });
+      res.status(201).send({ user });
     }
   } catch (err) {
     next(err);
@@ -48,7 +51,7 @@ const postUser = async (req, res, next) => {
       throw new BadRequest('Введите правильный URL');
     }
     const user = await User.create({ name, about, avatar });
-    res.status(201).send({ user, message: 'Профиль пользователя создан' });
+    res.status(201).send({ user });
   } catch (err) {
     next(err);
   }
@@ -76,9 +79,9 @@ const updateUser = async (req, res, next) => {
       {
         new: true,
         runValidators: true,
-      }
+      };
     );
-    res.status(200).send({ user, message: 'Профиль обновлен' });
+    res.status(200).send({ user });
   } catch (err) {
     next(err);
   }
@@ -99,9 +102,9 @@ const updateAvatar = async (req, res, next) => {
       {
         new: true,
         runValidators: true,
-      }
+      };
     );
-    res.status(200).send({ user, message: 'Аватар обновлен' });
+    res.status(200).send({ user });
   } catch (err) {
     next(err);
   }
