@@ -1,6 +1,6 @@
 const validator = require('validator');
 const User = require('../models/user');
-const { NotFound , BadRequest } = require('../utils/errors');
+const { NotFound, BadRequest } = require('../utils/errors');
 
 const getUsers = async (req, res, next) => {
   try {
@@ -21,11 +21,11 @@ const getUserById = async (req, res, next) => {
     //   throw new NotFound("Введите правильный ID пользователя");
     // }
     if (!validator.isMongoId(req.params.id)) {
-      throw new NotFound('Введите правильный ID пользователя');
+      throw new BadRequest('Введите правильный ID пользователя');
     }
     const user = await User.findById(req.params.id);
     if (user === null) {
-      throw new BadRequest('Пользователь с таким ID не найден');
+      throw new NotFound('Пользователь с таким ID не найден');
     } else {
       res.status(200).send({ user });
     }

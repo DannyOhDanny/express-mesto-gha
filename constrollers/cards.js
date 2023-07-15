@@ -59,7 +59,7 @@ const likeCard = async (req, res, next) => {
     //   throw new NotFound("Введите ID");
     // }
     if (!validator.isMongoId(req.params.id)) {
-      throw new NotFound('Формат ID неверный');
+      throw new BadRequest('Формат ID неверный');
     }
     const card = await Card.findByIdAndUpdate(
       req.params.id,
@@ -67,7 +67,7 @@ const likeCard = async (req, res, next) => {
       { new: true },
     );
     if (card === null) {
-      throw new BadRequest('Карточка не найдена');
+      throw new NotFound('Карточка не найдена');
     } else {
       res.status(201).send({ card });
     }
@@ -82,7 +82,7 @@ const deleteLikeCard = async (req, res, next) => {
     //   throw new NotFound("Введите ID");
     // }
     if (!validator.isMongoId(req.params.id)) {
-      throw new NotFound('Формат ID неверный');
+      throw new BadRequest('Формат ID неверный');
     }
 
     const card = await Card.findByIdAndUpdate(
@@ -91,7 +91,7 @@ const deleteLikeCard = async (req, res, next) => {
       { new: true },
     );
     if (card === null) {
-      throw new BadRequest('Карточка не найдена');
+      throw new NotFound('Карточка не найдена');
     } else {
       res.status(200).send({ card });
     }
