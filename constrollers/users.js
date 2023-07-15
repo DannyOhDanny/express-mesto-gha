@@ -1,6 +1,6 @@
 const validator = require('validator');
 const User = require('../models/user');
-const { NotFound } = require('../utils/errors');
+const { NotFound , BadRequest } = require('../utils/errors');
 
 const getUsers = async (req, res, next) => {
   try {
@@ -8,7 +8,7 @@ const getUsers = async (req, res, next) => {
     if (users.length === 0) {
       throw new NotFound('Cписок пользователей пуст');
     } else {
-      res.status(201).send({ users });
+      res.status(200).send({ users });
     }
   } catch (err) {
     next(err);
@@ -25,9 +25,9 @@ const getUserById = async (req, res, next) => {
     }
     const user = await User.findById(req.params.id);
     if (user === null) {
-      throw new NotFound('Пользователь с таким ID не найден');
+      throw new BadRequest('Пользователь с таким ID не найден');
     } else {
-      res.status(201).send({ user });
+      res.status(200).send({ user });
     }
   } catch (err) {
     next(err);

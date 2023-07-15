@@ -8,7 +8,7 @@ const getCards = async (req, res, next) => {
     if (cards.length === 0) {
       throw new NotFound('Cписок карточек пуст');
     } else {
-      res.status(201).send({ cards });
+      res.status(200).send({ cards });
     }
   } catch (err) {
     next(err);
@@ -29,7 +29,7 @@ const postCard = async (req, res, next) => {
     //   throw new BadRequest('Введите правильный URL');
     // }
     const card = await Card.create({ name, link, owner: req.user._id });
-    res.status(201).send({ card });
+    res.status(200).send({ card });
   } catch (err) {
     next(err);
   }
@@ -67,7 +67,7 @@ const likeCard = async (req, res, next) => {
       { new: true },
     );
     if (card === null) {
-      throw new NotFound('Карточка не найдена');
+      throw new BadRequest('Карточка не найдена');
     } else {
       res.status(201).send({ card });
     }
@@ -91,7 +91,7 @@ const deleteLikeCard = async (req, res, next) => {
       { new: true },
     );
     if (card === null) {
-      throw new NotFound('Карточка не найдена');
+      throw new BadRequest('Карточка не найдена');
     } else {
       res.status(200).send({ card });
     }
