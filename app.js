@@ -1,13 +1,16 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const helmet = require('helmet');
 const userRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
 const handleErrors = require('./utils/handleErrors');
 
 // Слушаем 3000 порт
-const { PORT = 3000 } = process.env;
+const { PORT = 3000, DB_URL = 'mongodb://127.0.0.1:27017/mestodb' } = process.env;
 
 const app = express();
+
+app.use(helmet());
 
 app.use(express.json());
 
@@ -25,7 +28,7 @@ app.use('/cards', cardRouter);
 
 app.use(handleErrors);
 
-mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
+mongoose.connect(DB_URL);
 
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console

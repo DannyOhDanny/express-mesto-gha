@@ -1,6 +1,6 @@
 const validator = require('validator');
 const User = require('../models/user');
-const { BadRequest, NotFound } = require('../utils/errors');
+const { NotFound } = require('../utils/errors');
 
 const getUsers = async (req, res, next) => {
   try {
@@ -17,9 +17,9 @@ const getUsers = async (req, res, next) => {
 
 const getUserById = async (req, res, next) => {
   try {
-    if (!req.params.id) {
-      throw new NotFound('Введите правильный ID пользователя');
-    }
+    // if (!req.params.id) {
+    //   throw new NotFound("Введите правильный ID пользователя");
+    // }
     if (!validator.isMongoId(req.params.id)) {
       throw new NotFound('Введите правильный ID пользователя');
     }
@@ -37,19 +37,18 @@ const getUserById = async (req, res, next) => {
 const postUser = async (req, res, next) => {
   const { name, about, avatar } = req.body;
   try {
-    if (!name || !about || !avatar) {
-      throw new BadRequest('Не заполнено обязательное поле');
-    }
-
-    if (name.length < 2 || about.length < 2) {
-      throw new BadRequest('Поле должно содержать более 2 символов');
-    }
-    if (about.length > 30 || name.length > 30) {
-      throw new BadRequest('Поле должно содержать не более 30 символов');
-    }
-    if (!validator.isURL(avatar)) {
-      throw new BadRequest('Введите правильный URL');
-    }
+    // if (!name || !about || !avatar) {
+    //   throw new BadRequest("Не заполнено обязательное поле");
+    // }
+    // if (name.length < 2 || about.length < 2) {
+    //   throw new BadRequest("Поле должно содержать более 2 символов");
+    // }
+    // if (about.length > 30 || name.length > 30) {
+    //   throw new BadRequest("Поле должно содержать не более 30 символов");
+    // }
+    // if (!validator.isURL(avatar)) {
+    //   throw new BadRequest("Введите правильный URL");
+    // }
     const user = await User.create({ name, about, avatar });
     res.status(201).send({ user });
   } catch (err) {
@@ -61,18 +60,19 @@ const updateUser = async (req, res, next) => {
   const { name, about } = req.body;
 
   try {
-    if (!name) {
-      throw new BadRequest('Не заполнено поле "Имя"');
-    }
-    if (!about) {
-      throw new BadRequest('Не заполнено поле "О себе"');
-    }
-    if (about.length < 2 || name.length < 2) {
-      throw new BadRequest('Поле должно содержать более 2 символов');
-    }
-    if (about.length > 30 || name.length > 30) {
-      throw new BadRequest('Поле должно содержать не более 30 символов');
-    }
+    // if (!name) {
+    //   throw new BadRequest('Не заполнено поле "Имя"');
+    // }
+    // if (!about) {
+    //   throw new BadRequest('Не заполнено поле "О себе"');
+    // }
+
+    // if (about.length < 2 || name.length < 2) {
+    //   throw new BadRequest("Поле должно содержать более 2 символов");
+    // }
+    // if (about.length > 30 || name.length > 30) {
+    //   throw new BadRequest("Поле должно содержать не более 30 символов");
+    // }
     const user = await User.findByIdAndUpdate(
       req.user._id,
       { name, about },
@@ -90,12 +90,12 @@ const updateUser = async (req, res, next) => {
 const updateAvatar = async (req, res, next) => {
   const { avatar } = req.body;
   try {
-    if (!validator.isURL(avatar)) {
-      throw new BadRequest('Введите правильный URL');
-    }
-    if (!avatar) {
-      throw new BadRequest('Не заполнено поле "Ссылка на аватар"');
-    }
+    // if (!validator.isURL(avatar)) {
+    //   throw new BadRequest("Введите правильный URL");
+    // }
+    // if (!avatar) {
+    //   throw new BadRequest('Не заполнено поле "Ссылка на аватар"');
+    // }
     const user = await User.findByIdAndUpdate(
       req.user._id,
       { avatar },
