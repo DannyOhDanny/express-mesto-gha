@@ -6,6 +6,7 @@ const cardRouter = require('./routes/cards');
 const handleErrors = require('./utils/handleErrors');
 
 // Слушаем 3000 порт
+/* eslint operator-linebreak: ["error", "none"] */
 const { PORT = 3000, DB_URL = 'mongodb://127.0.0.1:27017/mestodb' } = process.env;
 
 const app = express();
@@ -25,6 +26,13 @@ app.use((req, res, next) => {
 app.use('/users', userRouter);
 
 app.use('/cards', cardRouter);
+
+app.use('/*', (req, res) => {
+  res.status(404).send({
+    status: res.statusCode,
+    message: 'Ошибка 404. Страница не найдена',
+  });
+});
 
 app.use(handleErrors);
 
