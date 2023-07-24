@@ -1,4 +1,4 @@
-/* eslint max-classes-per-file: ["error", 4] */
+/* eslint max-classes-per-file: ["error", 5] */
 /* eslint no-use-before-define: ["error", { "classes": false }] */
 
 class GeneralError extends Error {
@@ -17,6 +17,9 @@ class GeneralError extends Error {
     if (this instanceof ValidationError) {
       return 400;
     }
+    if (this instanceof Unauthorized) {
+      return 401;
+    }
 
     return 500;
   }
@@ -25,10 +28,12 @@ class GeneralError extends Error {
 class BadRequest extends GeneralError {}
 class NotFound extends GeneralError {}
 class ValidationError extends GeneralError {}
+class Unauthorized extends GeneralError {}
 
 module.exports = {
   GeneralError,
   BadRequest,
   NotFound,
   ValidationError,
+  Unauthorized,
 };

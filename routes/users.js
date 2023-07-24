@@ -5,11 +5,13 @@ const {
   postUser,
   updateUser,
   updateAvatar,
+  login,
 } = require('../constrollers/users');
 
 userRouter.get('/', getUsers);
 userRouter.get('/:id', getUserById);
-userRouter.post('/', postUser);
+userRouter.post('/signin', login);
+userRouter.post('/signup', postUser);
 userRouter.patch('/me', updateUser);
 userRouter.patch('/me/avatar', updateAvatar);
 

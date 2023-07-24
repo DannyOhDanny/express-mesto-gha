@@ -1,6 +1,15 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
+const bcrypt = require('bcryptjs');
 const validator = require('validator');
+// eslint-disable-next-line import/no-extraneous-dependencies
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const { NotFound, BadRequest } = require('../utils/errors');
+const {
+  Unauthorized,
+  GeneralError,
+  NotFound,
+  BadRequest,
+} = require('../utils/errors');
 
 const getUsers = async (req, res, next) => {
   try {
@@ -17,9 +26,6 @@ const getUsers = async (req, res, next) => {
 
 const getUserById = async (req, res, next) => {
   try {
-    // if (!req.params.id) {
-    //   throw new NotFound("Введите правильный ID пользователя");
-    // }
     if (!validator.isMongoId(req.params.id)) {
       throw new BadRequest('Введите правильный ID пользователя');
     }
@@ -35,21 +41,16 @@ const getUserById = async (req, res, next) => {
 };
 
 const postUser = async (req, res, next) => {
-  const { name, about, avatar } = req.body;
+  const { name, about, email, password, avatar } = req.body;
   try {
-    // if (!name || !about || !avatar) {
-    //   throw new BadRequest("Не заполнено обязательное поле");
-    // }
-    // if (name.length < 2 || about.length < 2) {
-    //   throw new BadRequest("Поле должно содержать более 2 символов");
-    // }
-    // if (about.length > 30 || name.length > 30) {
-    //   throw new BadRequest("Поле должно содержать не более 30 символов");
-    // }
-    // if (!validator.isURL(avatar)) {
-    //   throw new BadRequest("Введите правильный URL");
-    // }
-    const user = await User.create({ name, about, avatar });
+    const hashPassword = await bcrypt.hash(password, 10);
+    const user = await User.create({
+      name,
+      about,
+      email,
+      password: hashPassword,
+      avatar,
+    });
     res.status(201).send({ user });
   } catch (err) {
     next(err);
@@ -60,26 +61,13 @@ const updateUser = async (req, res, next) => {
   const { name, about } = req.body;
 
   try {
-    // if (!name) {
-    //   throw new BadRequest('Не заполнено поле "Имя"');
-    // }
-    // if (!about) {
-    //   throw new BadRequest('Не заполнено поле "О себе"');
-    // }
-
-    // if (about.length < 2 || name.length < 2) {
-    //   throw new BadRequest("Поле должно содержать более 2 символов");
-    // }
-    // if (about.length > 30 || name.length > 30) {
-    //   throw new BadRequest("Поле должно содержать не более 30 символов");
-    // }
     const user = await User.findByIdAndUpdate(
       req.user._id,
       { name, about },
       {
         new: true,
         runValidators: true,
-      },
+      }
     );
     res.status(200).send({ user });
   } catch (err) {
@@ -90,21 +78,49 @@ const updateUser = async (req, res, next) => {
 const updateAvatar = async (req, res, next) => {
   const { avatar } = req.body;
   try {
-    // if (!validator.isURL(avatar)) {
-    //   throw new BadRequest("Введите правильный URL");
-    // }
-    // if (!avatar) {
-    //   throw new BadRequest('Не заполнено поле "Ссылка на аватар"');
-    // }
     const user = await User.findByIdAndUpdate(
       req.user._id,
       { avatar },
       {
         new: true,
         runValidators: true,
-      },
+      }
     );
     res.status(200).send({ user });
+  } catch (err) {
+    next(err);
+  }
+};
+const login = async (req, res, next) => {
+  const { email, password } = req.body;
+
+  try {
+    if (!req.body) {
+      throw new GeneralError('Серверная ошибка');
+    }
+
+    if (!email || !password) {
+      throw new BadRequest('Не указан логин или пароль');
+    }
+    const user = await User.findOne({ email });
+    if (!user || user === null) {
+      throw new BadRequest('Такого пользователя не существует');
+    }
+    const isValid = await bcrypt.compare(password, user.password);
+    if (!isValid) {
+      throw new Unauthorized('Неверный логин или пароль');
+    }
+    // res.status(200).send({ user, message: 'Все верно!' });
+    const token = jwt.sign(
+      { _id: user._id, email: user.email },
+      'some-secret-key',
+      {
+        expiresIn: '7d',
+      }
+    );
+    // res.status(200).send({ token });
+    res.cookie('jwt', token, { maxAge: 3600000 * 24 * 7, httpOnly: true });
+    res.end();
   } catch (err) {
     next(err);
   }
@@ -116,4 +132,5 @@ module.exports = {
   postUser,
   updateUser,
   updateAvatar,
+  login,
 };

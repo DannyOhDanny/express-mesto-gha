@@ -18,16 +18,6 @@ const getCards = async (req, res, next) => {
 const postCard = async (req, res, next) => {
   const { name, link } = req.body;
   try {
-    // if (!name || !link) {
-    //   throw new BadRequest('Не заполнено обязательное поле');
-    // }
-
-    // if (name.length < 2 || name.length > 30) {
-    //   throw new BadRequest('Поле должно содержать от 2 до 30 символов');
-    // }
-    // if (!validator.isURL(link)) {
-    //   throw new BadRequest('Введите правильный URL');
-    // }
     const card = await Card.create({ name, link, owner: req.user._id });
     res.status(200).send({ card });
   } catch (err) {
@@ -37,9 +27,6 @@ const postCard = async (req, res, next) => {
 
 const deleteCardById = async (req, res, next) => {
   try {
-    // if (!req.params.id) {
-    //   throw new BadRequest("Введите ID карточки");
-    // }
     if (!validator.isMongoId(req.params.id)) {
       throw new BadRequest('Формат ID неверный');
     }
@@ -55,16 +42,13 @@ const deleteCardById = async (req, res, next) => {
 
 const likeCard = async (req, res, next) => {
   try {
-    // if (!req.params.id) {
-    //   throw new NotFound("Введите ID");
-    // }
     if (!validator.isMongoId(req.params.id)) {
       throw new BadRequest('Формат ID неверный');
     }
     const card = await Card.findByIdAndUpdate(
       req.params.id,
       { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
-      { new: true },
+      { new: true }
     );
     if (card === null) {
       throw new NotFound('Карточка не найдена');
@@ -78,9 +62,6 @@ const likeCard = async (req, res, next) => {
 
 const deleteLikeCard = async (req, res, next) => {
   try {
-    // if (!req.params.id) {
-    //   throw new NotFound("Введите ID");
-    // }
     if (!validator.isMongoId(req.params.id)) {
       throw new BadRequest('Формат ID неверный');
     }
@@ -88,7 +69,7 @@ const deleteLikeCard = async (req, res, next) => {
     const card = await Card.findByIdAndUpdate(
       req.params.id,
       { $pull: { likes: req.user._id } }, // добавить _id в массив, если его там нет
-      { new: true },
+      { new: true }
     );
     if (card === null) {
       throw new NotFound('Карточка не найдена');
