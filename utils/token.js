@@ -6,11 +6,9 @@ const checkAuth = (token) => {
   }
   try {
     return jwt.verify(token, 'some-secret-key');
-  } catch {
+  } catch (err) {
     return false;
   }
 };
 
-module.exports = {
-  checkAuth,
-};
+module.exports = { checkAuth };

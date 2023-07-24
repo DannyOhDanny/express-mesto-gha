@@ -1,8 +1,11 @@
 const express = require('express');
+const cookies = require('cookie-parser');
 const mongoose = require('mongoose');
-//const helmet = require('helmet');
+const helmet = require('helmet');
 const userRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
+const { auth } = require('./ middlewares/auth');
+const { login, postUser } = require('./constrollers/users');
 const handleErrors = require('./utils/handleErrors');
 
 // Слушаем 3000 порт
@@ -12,21 +15,22 @@ const { PORT = 3000, DB_URL = 'mongodb://127.0.0.1:27017/mestodb' } =
 
 const app = express();
 
-//app.use(helmet());
-
+app.use(cookies());
+app.use(helmet());
 app.use(express.json());
 
 app.use((req, res, next) => {
   req.user = {
-    _id: '64bb03d0f91b9c5b2de42a41', // вставьте сюда _id созданного в предыдущем пункте пользователя
+    _id: '64beaafc044ea71ef08647f5', // вставьте сюда _id созданного в предыдущем пункте пользователя
   };
 
   next();
 });
 
-app.use('/users', userRouter);
-
-app.use('/cards', cardRouter);
+app.post('/signin', login);
+app.post('/signup', postUser);
+app.use('/users', auth, userRouter);
+app.use('/cards', auth, cardRouter);
 
 app.use('/*', (req, res) => {
   res.status(404).send({

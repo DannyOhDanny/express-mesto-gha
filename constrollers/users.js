@@ -24,6 +24,20 @@ const getUsers = async (req, res, next) => {
   }
 };
 
+const getUser = async (req, res, next) => {
+  try {
+    const userId = req.user._id;
+    const user = await User.findById(userId);
+    if (user.length === 0 || user === null) {
+      throw new NotFound('Cписок пользователей пуст');
+    } else {
+      res.status(200).send({ user });
+    }
+  } catch (err) {
+    next(err);
+  }
+};
+
 const getUserById = async (req, res, next) => {
   try {
     if (!validator.isMongoId(req.params.id)) {
@@ -110,7 +124,7 @@ const login = async (req, res, next) => {
     if (!isValid) {
       throw new Unauthorized('Неверный логин или пароль');
     }
-    // res.status(200).send({ user, message: 'Все верно!' });
+
     const token = jwt.sign(
       { _id: user._id, email: user.email },
       'some-secret-key',
@@ -120,7 +134,12 @@ const login = async (req, res, next) => {
     );
     // res.status(200).send({ token });
     res.cookie('jwt', token, { maxAge: 3600000 * 24 * 7, httpOnly: true });
-    res.end();
+    res.status(200).send({
+      _id: user._id,
+      emai: user.email,
+      message: 'Вы успешно авторизированы',
+    });
+    // res.end();
   } catch (err) {
     next(err);
   }
@@ -133,4 +152,5 @@ module.exports = {
   updateUser,
   updateAvatar,
   login,
+  getUser,
 };
