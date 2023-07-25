@@ -2,7 +2,7 @@ const express = require('express');
 // eslint-disable-next-line import/no-extraneous-dependencies
 const cookies = require('cookie-parser');
 // eslint-disable-next-line import/no-extraneous-dependencies
-// const { errors } = require('celebrate');
+const { errors } = require('celebrate');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
 const userRouter = require('./routes/users');
@@ -28,7 +28,7 @@ app.use('/cards', auth, cardRouter);
 
 // eslint-disable-next-line no-unused-vars
 app.use('/*', error404);
-// app.use(errors());
+app.use(errors());
 app.use(handleErrors);
 
 mongoose.connect(DB_URL);
