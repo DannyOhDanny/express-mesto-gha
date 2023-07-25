@@ -13,6 +13,7 @@ const { handleErrors, error404 } = require('./utils/handleErrors');
 
 // Слушаем 3000 порт
 /* eslint operator-linebreak: ["error", "none"] */
+// eslint-disable-next-line operator-linebreak
 const { PORT = 3000, DB_URL = 'mongodb://127.0.0.1:27017/mestodb' } =
   process.env;
 
