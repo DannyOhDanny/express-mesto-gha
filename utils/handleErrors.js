@@ -16,7 +16,7 @@ const handleErrors = (err, req, res, next) => {
     });
   }
   if (err.code === 11000) {
-    return res.status(400).json({
+    return res.status(409).json({
       code: res.statusCode,
       status: err.name,
       message: [err.message, 'Данный пользователь уже зарегистрирован'],
@@ -24,12 +24,13 @@ const handleErrors = (err, req, res, next) => {
   }
 
   if (err.name === 'MongoServerError') {
-    return res.status(400).json({
+    return res.status(409).json({
       code: res.statusCode,
       status: err.name,
       message: [err.message, 'Данный email или пароль уже зарегистрирован'],
     });
   }
+
   return res.status(500).json({
     code: res.statusCode,
     status: err.name,

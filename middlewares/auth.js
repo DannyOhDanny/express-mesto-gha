@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const { Unauthorized } = require('../utils/errors');
 const { checkAuth } = require('../utils/token');
 

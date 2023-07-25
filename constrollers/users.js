@@ -53,7 +53,13 @@ const createUser = async (req, res, next) => {
       password: hashPassword,
       avatar,
     });
-    res.status(201).send({ user });
+    res.status(201).send({
+      _id: user._id,
+      email: user.email,
+      name: user.name,
+      about: user.about,
+      avatar: user.avatar,
+    });
   } catch (err) {
     next(err);
   }
@@ -107,7 +113,7 @@ const login = async (req, res, next) => {
 
     const user = await User.findOne({ email }).select('+password');
     if (!user || user === null) {
-      throw new BadRequest('Такого пользователя не существует');
+      throw new Unauthorized('Такого пользователя не существует');
     }
     const isValid = await bcrypt.compare(password, user.password);
     if (!isValid) {
@@ -127,7 +133,7 @@ const login = async (req, res, next) => {
     res.cookie('jwt', token, { maxAge: 3600000 * 24 * 7, httpOnly: true });
     res.status(200).send({
       _id: user._id,
-      email: user.email,
+      // email: user.email,
       message: 'Вы успешно авторизированы',
     });
     // res.end();

@@ -6,11 +6,16 @@ const {
   updateAvatar,
   getUser,
 } = require('../constrollers/users');
+const {
+  updateUserValidation,
+  updateAvatarValidation,
+  idValidation,
+} = require('../middlewares/validations');
 
 userRouter.get('/', getUsers);
 userRouter.get('/me', getUser);
-userRouter.get('/:id', getUserById);
-userRouter.patch('/me', updateUser);
-userRouter.patch('/me/avatar', updateAvatar);
+userRouter.get('/:id', idValidation, getUserById);
+userRouter.patch('/me', updateUserValidation, updateUser);
+userRouter.patch('/me/avatar', updateAvatarValidation, updateAvatar);
 
 module.exports = userRouter;
