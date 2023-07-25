@@ -40,6 +40,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Обязательное поле'],
       minlength: 8,
+      select: false,
     },
   },
   { versionKey: false }

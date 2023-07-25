@@ -24,20 +24,6 @@ const getUsers = async (req, res, next) => {
   }
 };
 
-const getUser = async (req, res, next) => {
-  try {
-    const userId = req.user._id;
-    const user = await User.findById(userId);
-    if (user.length === 0 || user === null) {
-      throw new NotFound('Cписок пользователей пуст');
-    } else {
-      res.status(200).send({ user });
-    }
-  } catch (err) {
-    next(err);
-  }
-};
-
 const getUserById = async (req, res, next) => {
   try {
     if (!validator.isMongoId(req.params.id)) {
@@ -54,7 +40,7 @@ const getUserById = async (req, res, next) => {
   }
 };
 
-const postUser = async (req, res, next) => {
+const createUser = async (req, res, next) => {
   const { name, about, email, password, avatar } = req.body;
   try {
     const hashPassword = await bcrypt.hash(password, 10);
@@ -116,7 +102,8 @@ const login = async (req, res, next) => {
     if (!email || !password) {
       throw new BadRequest('Не указан логин или пароль');
     }
-    const user = await User.findOne({ email });
+
+    const user = await User.findOne({ email }).select('+password');
     if (!user || user === null) {
       throw new BadRequest('Такого пользователя не существует');
     }
@@ -127,7 +114,9 @@ const login = async (req, res, next) => {
 
     const token = jwt.sign(
       { _id: user._id, email: user.email },
-      'some-secret-key',
+      process.env.NODE_ENV === 'production'
+        ? process.env.SECRET_KEY
+        : 'dev-secret',
       {
         expiresIn: '7d',
       }
@@ -136,7 +125,7 @@ const login = async (req, res, next) => {
     res.cookie('jwt', token, { maxAge: 3600000 * 24 * 7, httpOnly: true });
     res.status(200).send({
       _id: user._id,
-      emai: user.email,
+      email: user.email,
       message: 'Вы успешно авторизированы',
     });
     // res.end();
@@ -145,10 +134,23 @@ const login = async (req, res, next) => {
   }
 };
 
+const getUser = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id);
+
+    if (user === null) {
+      throw new NotFound('Cписок пользователей пуст');
+    }
+    res.status(200).send({ user });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   getUsers,
   getUserById,
-  postUser,
+  createUser,
   updateUser,
   updateAvatar,
   login,
