@@ -1,6 +1,6 @@
 const validator = require('validator');
 const Card = require('../models/card');
-const { BadRequest, NotFound, Unauthorized } = require('../utils/errors');
+const { BadRequest, NotFound, Forbidden } = require('../utils/errors');
 
 const getCards = async (req, res, next) => {
   try {
@@ -34,11 +34,12 @@ const deleteCardById = async (req, res, next) => {
       throw new BadRequest('Формат ID неверный');
     }
     const card = await Card.findByIdAndRemove(req.params.id);
-    if (!card.owner.equals(req.user.payload._id)) {
-      throw new Unauthorized('Удаление чужих карточек - запрещено.');
-    }
-    if (card === null) {
+
+    if (card == null) {
       throw new NotFound('Карточка с таким ID не найдена');
+    }
+    if (!card.owner.equals(req.user.payload._id)) {
+      throw new Forbidden('Удаление чужих карточек - запрещено.');
     }
     res.status(200).send({ card, message: 'Карточка удалена' });
   } catch (err) {

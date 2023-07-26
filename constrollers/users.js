@@ -42,7 +42,9 @@ const getUserById = async (req, res, next) => {
 };
 
 const createUser = async (req, res, next) => {
-  const { name, about, email, password, avatar } = req.body;
+  const {
+    name, about, email, password, avatar
+  } = req.body;
   try {
     const hashPassword = await bcrypt.hash(password, 10);
     const user = await User.create({
@@ -69,7 +71,7 @@ const updateUser = async (req, res, next) => {
 
   try {
     const user = await User.findByIdAndUpdate(
-      req.user._id,
+      req.user.payload._id,
       { name, about },
       {
         new: true,
@@ -86,7 +88,7 @@ const updateAvatar = async (req, res, next) => {
   const { avatar } = req.body;
   try {
     const user = await User.findByIdAndUpdate(
-      req.user._id,
+      req.user.payload._id,
       { avatar },
       {
         new: true,

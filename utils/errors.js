@@ -1,4 +1,4 @@
-/* eslint max-classes-per-file: ["error", 6] */
+/* eslint max-classes-per-file: ["error", 7] */
 /* eslint no-use-before-define: ["error", { "classes": false }] */
 
 class GeneralError extends Error {
@@ -20,6 +20,9 @@ class GeneralError extends Error {
     if (this instanceof Unauthorized) {
       return 401;
     }
+    if (this instanceof Forbidden) {
+      return 403;
+    }
     if (this instanceof IncorrectCredentials) {
       return 409;
     }
@@ -33,6 +36,7 @@ class NotFound extends GeneralError {}
 class ValidationError extends GeneralError {}
 class Unauthorized extends GeneralError {}
 class IncorrectCredentials extends GeneralError {}
+class Forbidden extends GeneralError {}
 
 module.exports = {
   GeneralError,
@@ -41,4 +45,5 @@ module.exports = {
   ValidationError,
   Unauthorized,
   IncorrectCredentials,
+  Forbidden,
 };
