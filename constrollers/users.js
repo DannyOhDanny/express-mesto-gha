@@ -1,11 +1,10 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-require('dotenv').config();
-// eslint-disable-next-line import/no-extraneous-dependencies
+const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const validator = require('validator');
 // eslint-disable-next-line import/no-extraneous-dependencies
-const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+// const { createToken } = require('../utils/token');
 const {
   Unauthorized,
   GeneralError,
@@ -101,6 +100,7 @@ const updateAvatar = async (req, res, next) => {
     next(err);
   }
 };
+
 const login = async (req, res, next) => {
   const { email, password } = req.body;
 
@@ -122,23 +122,19 @@ const login = async (req, res, next) => {
       throw new Unauthorized('Неверный логин или пароль');
     }
 
-    const token = jwt.sign(
-      { _id: user._id, email: user.email },
-      process.env.NODE_ENV === 'production'
-        ? process.env.SECRET_KEY
-        : 'dev-secret',
-      {
-        expiresIn: '7d',
-      }
-    );
+    const token = jwt.sign({ _id: user._id }, 'some-secret-key', {
+      expiresIn: '7d',
+    });
     // res.status(200).send({ token });
     res.cookie('jwt', token, { maxAge: 3600000 * 24 * 7, httpOnly: true });
+
     res.status(200).send({
       _id: user._id,
       // email: user.email,
       message: 'Вы успешно авторизированы',
     });
     // res.end();
+    next();
   } catch (err) {
     next(err);
   }

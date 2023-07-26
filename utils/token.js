@@ -1,13 +1,13 @@
-const jwt = require('jsonwebtoken');
 // eslint-disable-next-line import/no-extraneous-dependencies
-require('dotenv').config();
+const jwt = require('jsonwebtoken');
 
 const checkAuth = (token) => {
   if (!token) {
     return false;
   }
   try {
-    return jwt.verify(token, process.env.SECRET_KEY);
+    const payload = jwt.verify(token, 'some-secret-key');
+    return payload;
   } catch (err) {
     return false;
   }
