@@ -15,13 +15,8 @@ const handleErrors = (err, req, res, next) => {
       message: ['Ошибка валидации', err.message],
     });
   }
-  if (err.code === 11000 || err.code === 'MongoServerError') {
+  if (err.code === 11000 || err.name === 'MongoServerError') {
     throw new ValidationError('Данный пользователь уже зарегистрирован');
-    // return res.status(409).json({
-    //   code: res.statusCode,
-    //   status: err.name,
-    //   message: [err.message, 'Данный пользователь уже зарегистрирован'],
-    // });
   }
 
   // if (err.name === 'MongoServerError') {
