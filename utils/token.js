@@ -6,8 +6,7 @@ const checkAuth = (token) => {
     return false;
   }
   try {
-    const payload = jwt.verify(token, 'some-secret-key');
-    return payload;
+    return jwt.verify(token, 'some-secret-key');
   } catch (err) {
     return false;
   }

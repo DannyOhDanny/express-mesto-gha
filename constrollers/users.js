@@ -42,9 +42,7 @@ const getUserById = async (req, res, next) => {
 };
 
 const createUser = async (req, res, next) => {
-  const {
-    name, about, email, password, avatar
-  } = req.body;
+  const { name, about, email, password, avatar } = req.body;
   try {
     const hashPassword = await bcrypt.hash(password, 10);
     const user = await User.create({
@@ -134,15 +132,17 @@ const login = async (req, res, next) => {
       message: 'Вы успешно авторизированы',
     });
     // res.end();
-    next();
+    // next();
   } catch (err) {
     next(err);
   }
 };
 
 const getUser = async (req, res, next) => {
+  // eslint-disable-next-line no-console
+  console.log(req);
   try {
-    const user = await User.findById(req.user._id);
+    const user = await User.findById(req.user.payload._id);
 
     if (user === null) {
       throw new NotFound('Cписок пользователей пуст');

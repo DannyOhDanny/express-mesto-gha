@@ -17,8 +17,11 @@ const getCards = async (req, res, next) => {
 
 const postCard = async (req, res, next) => {
   const { name, link } = req.body;
+  // eslint-disable-next-line no-console
+
   try {
-    const card = await Card.create({ name, link, owner: req.user._id });
+    const card = await Card.create({ name, link, owner: req.user.payload._id });
+
     res.status(200).send({ card });
   } catch (err) {
     next(err);
@@ -31,7 +34,7 @@ const deleteCardById = async (req, res, next) => {
       throw new BadRequest('Формат ID неверный');
     }
     const card = await Card.findByIdAndRemove(req.params.id);
-    if (!card.owner.equals(req.user._id)) {
+    if (!card.owner.equals(req.user.payload._id)) {
       throw new Unauthorized('Удаление чужих карточек - запрещено.');
     }
     if (card === null) {
@@ -50,13 +53,13 @@ const likeCard = async (req, res, next) => {
     }
     const card = await Card.findByIdAndUpdate(
       req.params.id,
-      { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
+      { $addToSet: { likes: req.user.payload._id } }, // добавить _id в массив, если его там нет
       { new: true }
     );
     if (card === null) {
       throw new NotFound('Карточка не найдена');
     } else {
-      res.status(201).send({ card });
+      res.status(201).send({ card, message: 'Лайк установелен' });
     }
   } catch (err) {
     next(err);
@@ -71,14 +74,14 @@ const deleteLikeCard = async (req, res, next) => {
 
     const card = await Card.findByIdAndUpdate(
       req.params.id,
-      { $pull: { likes: req.user._id } }, // добавить _id в массив, если его там нет
+      { $pull: { likes: req.user.payload._id } }, // добавить _id в массив, если его там нет
       { new: true }
     );
     if (card === null) {
       throw new NotFound('Карточка не найдена');
     }
 
-    res.status(200).send({ card });
+    res.status(200).send({ card, message: 'Лайк удален' });
   } catch (err) {
     next(err);
   }
