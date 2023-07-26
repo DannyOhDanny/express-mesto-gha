@@ -35,7 +35,7 @@ const deleteCardById = async (req, res, next) => {
     }
     const card = await Card.findByIdAndRemove(req.params.id);
 
-    if (card == null) {
+    if (card == null || !card) {
       throw new NotFound('Карточка с таким ID не найдена');
     }
     if (!card.owner.equals(req.user.payload._id)) {
