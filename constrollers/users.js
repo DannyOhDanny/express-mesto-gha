@@ -41,9 +41,7 @@ const getUserById = async (req, res, next) => {
 };
 
 const createUser = async (req, res, next) => {
-  const {
-    name, about, email, password, avatar
-  } = req.body;
+  const { name, about, email, password, avatar } = req.body;
   try {
     const hashPassword = await bcrypt.hash(password, 10);
     const user = await User.create({
@@ -126,11 +124,11 @@ const login = async (req, res, next) => {
         ? process.env.SECRET_KEY
         : 'dev-secret',
       {
-        expiresIn: '7d',
+        expiresIn: '2m',
       }
     );
     // res.status(200).send({ token });
-    res.cookie('jwt', token, { maxAge: 3600000 * 24 * 7, httpOnly: true });
+    res.cookie('jwt', token, { maxAge: 120000, httpOnly: true });
     res.status(200).send({
       _id: user._id,
       // email: user.email,

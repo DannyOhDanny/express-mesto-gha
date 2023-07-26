@@ -2,16 +2,16 @@
 const { Unauthorized } = require('../utils/errors');
 const { checkAuth } = require('../utils/token');
 
-const auth = async (req, res, next) => {
+const auth = (req, res, next) => {
   console.log(req.cookies);
 
   if (!req.cookies) {
     throw new Unauthorized('Доступ отклонен');
   }
-  const token = await req.cookies.jwt;
+  const token = req.cookies.jwt;
   console.log(`Токен ${token}`);
 
-  const payload = await checkAuth(token);
+  const payload = checkAuth(token);
   console.log(payload);
 
   if (!payload) {
