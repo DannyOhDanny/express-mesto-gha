@@ -11,13 +11,14 @@ const auth = async (req, res, next) => {
   const token = await req.cookies.jwt;
   console.log(`Токен ${token}`);
 
-  const payload = checkAuth(token);
+  const payload = await checkAuth(token);
   console.log(payload);
 
   if (!payload) {
     throw new Unauthorized('Вы не авторизированы');
   }
   req.user = payload;
+  console.log(req.user);
 
   next();
 };
