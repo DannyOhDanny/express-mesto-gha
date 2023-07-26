@@ -27,7 +27,6 @@ app.use('/', authRouter);
 app.use('/users', auth, userRouter);
 app.use('/cards', auth, cardRouter);
 
-// eslint-disable-next-line no-unused-vars
 app.use('/*', error404);
 app.use(errors());
 app.use(handleErrors);

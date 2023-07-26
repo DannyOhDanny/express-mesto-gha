@@ -1,4 +1,6 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
+require('dotenv').config();
+// eslint-disable-next-line import/no-extraneous-dependencies
 const bcrypt = require('bcryptjs');
 const validator = require('validator');
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -41,7 +43,9 @@ const getUserById = async (req, res, next) => {
 };
 
 const createUser = async (req, res, next) => {
-  const { name, about, email, password, avatar } = req.body;
+  const {
+    name, about, email, password, avatar
+  } = req.body;
   try {
     const hashPassword = await bcrypt.hash(password, 10);
     const user = await User.create({
@@ -124,11 +128,11 @@ const login = async (req, res, next) => {
         ? process.env.SECRET_KEY
         : 'dev-secret',
       {
-        expiresIn: '2m',
+        expiresIn: '7d',
       }
     );
     // res.status(200).send({ token });
-    res.cookie('jwt', token, { maxAge: 120000, httpOnly: true });
+    res.cookie('jwt', token, { maxAge: 3600000 * 24 * 7, httpOnly: true });
     res.status(200).send({
       _id: user._id,
       // email: user.email,
