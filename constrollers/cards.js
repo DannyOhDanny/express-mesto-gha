@@ -41,7 +41,7 @@ const deleteCardById = async (req, res, next) => {
     if (!card.owner.equals(req.user.payload._id)) {
       throw new Forbidden('Удаление чужих карточек - запрещено.');
     }
-    res.status(200).send({ card, message: 'Карточка удалена' });
+    res.status(200).send({ message: 'Карточка удалена' });
   } catch (err) {
     next(err);
   }

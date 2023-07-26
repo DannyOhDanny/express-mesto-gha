@@ -27,7 +27,7 @@ const handleErrors = (err, req, res, next) => {
     return res.status(409).json({
       code: res.statusCode,
       status: err.name,
-      message: [err.message, 'Данный email или пароль уже зарегистрирован'],
+      message: err.message,
     });
   }
 
