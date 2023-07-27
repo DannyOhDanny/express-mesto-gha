@@ -17,8 +17,6 @@ const getCards = async (req, res, next) => {
 
 const postCard = async (req, res, next) => {
   const { name, link } = req.body;
-  // eslint-disable-next-line no-console
-
   try {
     const card = await Card.create({ name, link, owner: req.user.payload._id });
 
@@ -54,7 +52,7 @@ const likeCard = async (req, res, next) => {
     }
     const card = await Card.findByIdAndUpdate(
       req.params.id,
-      { $addToSet: { likes: req.user.payload._id } }, // добавить _id в массив, если его там нет
+      { $addToSet: { likes: req.user.payload._id } }, // добавить _id из user.payload в массив
       { new: true }
     );
     if (card === null) {
@@ -75,7 +73,7 @@ const deleteLikeCard = async (req, res, next) => {
 
     const card = await Card.findByIdAndUpdate(
       req.params.id,
-      { $pull: { likes: req.user.payload._id } }, // добавить _id в массив, если его там нет
+      { $pull: { likes: req.user.payload._id } }, // удалить _id из user.payload из массива
       { new: true }
     );
     if (card === null) {

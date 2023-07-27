@@ -1,8 +1,6 @@
 require('dotenv').config();
 const express = require('express');
-// eslint-disable-next-line import/no-extraneous-dependencies
 const cookies = require('cookie-parser');
-// eslint-disable-next-line import/no-extraneous-dependencies
 const { errors } = require('celebrate');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
@@ -13,11 +11,8 @@ const { auth } = require('./middlewares/auth');
 const { handleErrors, error404 } = require('./utils/handleErrors');
 
 // Слушаем 3000 порт
-/* eslint operator-linebreak: ["error", "none"] */
-// eslint-disable-next-line operator-linebreak
 const { PORT = 3000, DB_URL = 'mongodb://127.0.0.1:27017/mestodb' } =
   process.env;
-// eslint-disable-next-line no-console
 // console.log(require('crypto').randomBytes(32).toString('hex'));
 
 const app = express();
@@ -37,6 +32,5 @@ app.use(handleErrors);
 mongoose.connect(DB_URL);
 
 app.listen(PORT, () => {
-  // eslint-disable-next-line no-console
   console.log(`App listening to port ${PORT}`);
 });

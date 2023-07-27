@@ -1,5 +1,5 @@
 const { GeneralError, NotFound } = require('./errors');
-// eslint-disable-next-line  no-unused-vars
+
 const handleErrors = (err, req, res, next) => {
   if (err instanceof GeneralError) {
     return res.status(err.getCode()).json({

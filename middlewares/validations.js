@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 const { celebrate, Joi } = require('celebrate');
 
 const signinValidation = celebrate({
@@ -15,7 +14,6 @@ const signupValidation = celebrate({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
     avatar: Joi.string().pattern(
-      // eslint-disable-next-line prefer-regex-literals
       new RegExp(
         '(https://www.|http://www.|https://|http://)?[a-zA-Z0-9]{2,}(.[a-zA-Z0-9]{2,})(.[a-zA-Z0-9]{2,})?'
       )
@@ -33,7 +31,6 @@ const updateUserValidation = celebrate({
 const updateAvatarValidation = celebrate({
   body: Joi.object().keys({
     avatar: Joi.string().pattern(
-      // eslint-disable-next-line prefer-regex-literals
       new RegExp(
         '(https://www.|http://www.|https://|http://)?[a-zA-Z0-9]{2,}(.[a-zA-Z0-9]{2,})(.[a-zA-Z0-9]{2,})?'
       )
@@ -43,22 +40,20 @@ const updateAvatarValidation = celebrate({
 
 const idValidation = celebrate({
   params: Joi.object().keys({
-    id: Joi.string().pattern(
-      // eslint-disable-next-line prefer-regex-literals
-      new RegExp('^[0-9a-fA-F]{24}$')
-    ),
+    id: Joi.string().pattern(new RegExp('^[0-9a-fA-F]{24}$')),
   }),
 });
 
 const cardValidation = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
-    link: Joi.string().required().pattern(
-      // eslint-disable-next-line prefer-regex-literals
-      new RegExp(
-        '(https://www.|http://www.|https://|http://)?[a-zA-Z0-9]{2,}(.[a-zA-Z0-9]{2,})(.[a-zA-Z0-9]{2,})?'
-      )
-    ),
+    link: Joi.string()
+      .required()
+      .pattern(
+        new RegExp(
+          '(https://www.|http://www.|https://|http://)?[a-zA-Z0-9]{2,}(.[a-zA-Z0-9]{2,})(.[a-zA-Z0-9]{2,})?'
+        )
+      ),
   }),
 });
 
