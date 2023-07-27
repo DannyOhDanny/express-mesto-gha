@@ -4,13 +4,15 @@ const bcrypt = require('bcryptjs');
 const validator = require('validator');
 // eslint-disable-next-line import/no-extraneous-dependencies
 const User = require('../models/user');
-// const { createToken } = require('../utils/token');
+
 const {
   Unauthorized,
   GeneralError,
   NotFound,
   BadRequest,
 } = require('../utils/errors');
+
+const { NODE_ENV, SECRET_KEY } = process.env;
 
 const getUsers = async (req, res, next) => {
   try {
@@ -106,7 +108,7 @@ const login = async (req, res, next) => {
 
   try {
     if (!req.body) {
-      throw new GeneralError('Серверная ошибка');
+      throw new GeneralError('На сервере произошла ошибка');
     }
 
     if (!email || !password) {
@@ -122,9 +124,13 @@ const login = async (req, res, next) => {
       throw new Unauthorized('Неверный логин или пароль');
     }
 
-    const token = jwt.sign({ _id: user._id }, 'some-secret-key', {
-      expiresIn: '7d',
-    });
+    const token = jwt.sign(
+      { _id: user._id },
+      NODE_ENV === 'production' ? SECRET_KEY : 'dev-secret',
+      {
+        expiresIn: '7d',
+      }
+    );
     // res.status(200).send({ token });
     res.cookie('jwt', token, { maxAge: 3600000 * 24 * 7, httpOnly: true });
 
@@ -164,3 +170,5 @@ module.exports = {
   login,
   getUser,
 };
+
+// 'some-secret-key'

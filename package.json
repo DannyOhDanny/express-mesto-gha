@@ -9,7 +9,8 @@
     "lint": "npx eslint .",
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "depcheck": "depcheck"
+    "depcheck": "depcheck",
+    "fix": "npx eslint . --fix"
   },
   "keywords": [],
   "license": "ISC",
