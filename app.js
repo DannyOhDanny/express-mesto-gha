@@ -4,6 +4,7 @@ const cookies = require('cookie-parser');
 const { errors } = require('celebrate');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 const userRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
 const authRouter = require('./routes/auths');
@@ -20,12 +21,15 @@ const app = express();
 app.use(cookies());
 app.use(helmet());
 app.use(express.json());
+app.use(requestLogger); // подключаем логгер запросов
 
 app.use('/', authRouter);
 app.use('/users', auth, userRouter);
 app.use('/cards', auth, cardRouter);
-
 app.use('/*', error404);
+
+app.use(errorLogger); // подключаем логгер ошибок
+
 app.use(errors());
 app.use(handleErrors);
 
